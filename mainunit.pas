@@ -10,8 +10,6 @@ uses
 
 type
 
-  { TMainForm }
-
   TMainForm = class(TForm)
     DivisionButton: TSpeedButton;
     CButton: TSpeedButton;
@@ -80,7 +78,6 @@ type
     procedure NegativeButtonClick(Sender: TObject);
     function IsInt(): boolean;
     procedure Error(err_msg: string);
-    procedure NothingClick(Sender: TObject);
     procedure ConstPiButtonClick(Sender: TObject);
     procedure Operators(Sender: TObject);
     procedure RenderFont();
@@ -101,6 +98,7 @@ var
 
 implementation
 
+{Посимвольное добавление в главный дисплей}
 procedure TMainForm.Addchar(ch: char; checkzero: boolean = True);
 begin
   if (boolError) or (DisplayLabel.Caption = '0') and (checkzero = True) or
@@ -112,6 +110,7 @@ begin
   DisplayLabel.Caption := DisplayLabel.Caption + ch;
 end;
 
+{Здесь реализованы все унарные функции}
 procedure TMainForm.FunctionsOnClick(Sender: TObject);
 begin
   CleanMiniDisplayIfNeed;
@@ -208,6 +207,7 @@ begin
   end;
 end;
 
+{Очищает минидисплей когда надо}
 procedure TMainForm.CleanMiniDisplayIfNeed;
 begin
   if NeedToCleanMiniDisplay then
@@ -218,9 +218,7 @@ begin
 end;
 
 {$R *.lfm}
-
-{ TMainForm }
-
+{Очищение дисплея}
 procedure TMainForm.ClearDisplay(mini: boolean = True);
 begin
   DisplayLabel.Caption := '0';
@@ -228,11 +226,13 @@ begin
     MiniDisplayLabel.Caption := '';
 end;
 
+{Великий Я}
 procedure TMainForm.My_CreatorClick(Sender: TObject);
 begin
   ShowMessage('Majorov The Great');
 end;
 
+{Работа с буффером 5-го размера}
 procedure TMainForm.MSButtonClick(Sender: TObject);
 var
   button: TCaption;
@@ -254,7 +254,7 @@ begin
 end;
 
 
-
+{Плюс-Минус}
 procedure TMainForm.NegativeButtonClick(Sender: TObject);
 begin
   if isInt then
@@ -263,6 +263,7 @@ begin
     DisplayLabel.Caption := floattostr(-1 * strtofloat(DisplayLabel.Caption));
 end;
 
+{Проверка на целое число}
 function TMainForm.IsInt: boolean;
 begin
   if pos(',', DisplayLabel.Caption) = 0 then
@@ -271,6 +272,7 @@ begin
     Result := False;
 end;
 
+{Получатель ошибок}
 procedure TMainForm.Error(err_msg: string);
 begin
   ClearDisplay(True);
@@ -281,11 +283,7 @@ begin
   DisplayLabel.Font.Size := 18;
 end;
 
-procedure TMainForm.NothingClick(Sender: TObject);
-begin
-  MainForm.Enabled := False;
-end;
-
+{Число Пи}
 procedure TMainForm.ConstPiButtonClick(Sender: TObject);
 begin
   ClearDisplay;
@@ -294,6 +292,7 @@ begin
   NeedToClean := True;
 end;
 
+{Плюс Минус Умножение Деление Возведение в степень}
 procedure TMainForm.Operators(Sender: TObject);
 begin
   CleanMiniDisplayIfNeed;
@@ -337,6 +336,7 @@ begin
   end;
 end;
 
+{Меняет размер шрифта}
 procedure TMainForm.RenderFont;
 begin
   if length(DisplayLabel.Caption) > 16 then
@@ -349,6 +349,7 @@ begin
     DisplayLabel.Font.Size := 36;
 end;
 
+{Считывание с клавиатуры}
 procedure TMainForm.FormKeyPress(Sender: TObject; var Key: char);
 begin
   case Key of
@@ -377,6 +378,7 @@ begin
   end;
 end;
 
+{Ввод в главный дисплей}
 procedure TMainForm.Input(Sender: TObject);
 var
   check: boolean = True;
@@ -397,6 +399,7 @@ begin
   NeedToClean := False;
 end;
 
+{Кнопка стиралка}
 procedure TMainForm.BackspaceButtonClick(Sender: TObject);
 var
   len: integer;
@@ -412,6 +415,7 @@ begin
   RenderFont;
 end;
 
+{Полная чистка епт}
 procedure TMainForm.CButtonClick(Sender: TObject);
 begin
   ClearDisplay;
@@ -421,12 +425,14 @@ begin
   PolandString := '';
 end;
 
+{Очищение главного дисплея}
 procedure TMainForm.CEButtonClick(Sender: TObject);
 begin
   ClearDisplay(False);
   RenderFont;
 end;
 
+{Закрывающая скобка}
 procedure TMainForm.CloseBracketButtonClick(Sender: TObject);
 begin
   if CloseBracketCount < OpenBracketCount then
@@ -445,6 +451,7 @@ begin
   Inc(OpenBracketCount);
 end;
 
+{Кнопка равно}
 procedure TMainForm.ResultButtonClick(Sender: TObject);
 begin
   if (pos('*', PolandString) = 0) and (pos('/', PolandString) = 0) and

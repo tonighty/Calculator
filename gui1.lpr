@@ -1,16 +1,17 @@
-program gui1;
+program Calculator;
 
 {$mode objfpc}{$H+}
 
 uses {$IFDEF UNIX} {$IFDEF UseCThreads}
   cthreads, {$ENDIF} {$ENDIF}
-  Interfaces, // this includes the LCL widgetset
+  Interfaces,
   Forms,
   mainunit,
-  Poland { you can add units after this };
+  Poland;
 
 {$R *.res}
 begin
+  Application.Title:='Calculator';
   RequireDerivedFormResource := True;
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);

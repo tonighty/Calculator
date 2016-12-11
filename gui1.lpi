@@ -6,10 +6,9 @@
     <General>
       <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <Title Value="gui1"/>
+      <Title Value="Calculator"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
-      <Icon Value="0"/>
     </General>
     <i18n>
       <EnableI18N LFM="False"/>
@@ -38,6 +37,7 @@
       <Unit0>
         <Filename Value="gui1.lpr"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Calculator"/>
       </Unit0>
       <Unit1>
         <Filename Value="mainunit.pas"/>
