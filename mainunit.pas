@@ -117,7 +117,7 @@ begin
   if not boolError then
   begin
     try
-      case TButton(Sender).Hint of
+      case TButton(Sender).Hint of   //надо будет вложенные функции нормально сделать
         'sqr':
         begin
           MiniDisplayLabel.Caption :=
@@ -178,10 +178,18 @@ begin
         end;
         'n!':
         begin
-          MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + DisplayLabel.Caption + '!';
-          DisplayLabel.Caption := floattostr(fac(strtofloat(DisplayLabel.Caption)));
-          PolandString += DisplayLabel.Caption;
+          if isInt() then
+          begin
+            MiniDisplayLabel.Caption :=
+              MiniDisplayLabel.Caption + DisplayLabel.Caption + '!';
+            DisplayLabel.Caption := floattostr(fac(strtofloat(DisplayLabel.Caption)));
+            PolandString += DisplayLabel.Caption;
+          end
+          else
+          begin
+            Error('Only Integer');
+            exit;
+          end;
         end;
         'ln':
         begin
@@ -298,7 +306,7 @@ begin
   CleanMiniDisplayIfNeed;
   if not boolError then
   begin
-    if TButton(Sender).Hint = '^' then
+    if TButton(Sender).Hint = '^' then //надо будет сократить эт
     begin
       if (MiniDisplayLabel.Caption = '') or
         ((MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] <> ')') and
@@ -444,6 +452,7 @@ begin
   end;
 end;
 
+{Открывающая скобка}
 procedure TMainForm.OpenBracketButtonClick(Sender: TObject);
 begin
   MiniDisplayLabel.Caption := MiniDisplayLabel.Caption + '(';
@@ -456,6 +465,7 @@ procedure TMainForm.ResultButtonClick(Sender: TObject);
 begin
   if (pos('*', PolandString) = 0) and (pos('/', PolandString) = 0) and
     (pos('-', PolandString) = 0) and (pos('+', PolandString) = 0) and
+    //ммм... быдлокод))00)0
     (pos('^', PolandString) = 0) then
     exit;
   if PolandString = '' then
