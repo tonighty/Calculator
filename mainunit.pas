@@ -87,7 +87,6 @@ type
     procedure Addchar(ch: char; checkzero: boolean = True);
     procedure FunctionsOnClick(Sender: TObject);
     procedure CleanMiniDisplayIfNeed();
-    procedure CleanDisplayIfError;
   private
     NeedToClean, boolError, NeedToCleanMiniDisplay: boolean;
     Buffer: extended;
@@ -101,15 +100,6 @@ var
   MainForm: TMainForm;
 
 implementation
-
-procedure TMainForm.CleanDisplayIfError;
-begin
-  if boolError then
-  begin
-    DisplayLabel.Caption := '0';
-    boolError := False;
-  end;
-end;
 
 procedure TMainForm.Addchar(ch: char; checkzero: boolean = True);
 begin
