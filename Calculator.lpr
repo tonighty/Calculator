@@ -11,7 +11,6 @@ uses {$IFDEF UNIX} {$IFDEF UseCThreads}
 
 {$R *.res}
 begin
-  Application.Title:='Calculator';
   RequireDerivedFormResource := True;
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
