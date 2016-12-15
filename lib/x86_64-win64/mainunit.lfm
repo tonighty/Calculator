@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 54
+  Left = 126
   Height = 533
-  Top = 264
+  Top = 159
   Width = 318
   BorderStyle = bsSingle
   Caption = 'µCalc'
@@ -15228,6 +15228,17 @@ object MainForm: TMainForm
       object Help: TMenuItem
         Caption = 'Help'
         OnClick = HelpClick
+      end
+    end
+    object Language: TMenuItem
+      Caption = 'Language'
+      object Russian: TMenuItem
+        Caption = 'Русский'
+        OnClick = RussianClick
+      end
+      object English: TMenuItem
+        Caption = 'English'
+        OnClick = EnglishClick
       end
     end
   end

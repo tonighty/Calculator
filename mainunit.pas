@@ -6,9 +6,11 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Buttons,
-  StdCtrls, LCLType, ExtCtrls, Menus, Math, Poland, LazUtils, LCLProc;
+  StdCtrls, LCLType, ExtCtrls, Menus, Math, Poland, LazUtils, LCLProc, IniFiles;
 
 type
+
+  { TMainForm }
 
   TMainForm = class(TForm)
     DivisionButton: TSpeedButton;
@@ -21,6 +23,9 @@ type
     MainMenu: TMainMenu;
     Help: TMenuItem;
     Calc: TMenuItem;
+    Language: TMenuItem;
+    English: TMenuItem;
+    Russian: TMenuItem;
     Mode: TMenuItem;
     MRButton: TSpeedButton;
     MMinusButton: TSpeedButton;
@@ -66,6 +71,7 @@ type
     procedure CButtonClick(Sender: TObject);
     procedure CEButtonClick(Sender: TObject);
     procedure CloseBracketButtonClick(Sender: TObject);
+    procedure EnglishClick(Sender: TObject);
     procedure OpenBracketButtonClick(Sender: TObject);
     procedure ResultButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -84,11 +90,14 @@ type
     procedure Addchar(ch: char; checkzero: boolean = True);
     procedure FunctionsOnClick(Sender: TObject);
     procedure CleanMiniDisplayIfNeed();
+    procedure RussianClick(Sender: TObject);
+    procedure LocalizateMenu;
   private
     NeedToClean, boolError, NeedToCleanMiniDisplay: boolean;
     Buffer: extended;
     OpenBracketCount, CloseBracketCount: integer;
     PolandString: string;
+    LanguageIniFile: TIniFile;
   public
     { public declarations }
   end;
@@ -117,7 +126,8 @@ begin
   if not boolError then
   begin
     try
-      case TButton(Sender).Hint of   //надо будет вложенные функции нормально сделать
+      case TButton(Sender).Hint of
+        // TODO: надо будет вложенные функции нормально сделать
         'sqr':
         begin
           MiniDisplayLabel.Caption :=
@@ -208,7 +218,7 @@ begin
       end;
     except
       on Exception do
-        Error('ERROR');
+        Error('Invalid Input');
     end;
     NeedToClean := True;
     RenderFont;
@@ -225,6 +235,23 @@ begin
   end;
 end;
 
+procedure TMainForm.RussianClick(Sender: TObject);
+begin
+  LanguageIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) +
+    '\Russian.ini');
+  LocalizateMenu;
+end;
+
+procedure TMainForm.LocalizateMenu;
+begin
+  Mode.Caption := LanguageIniFile.ReadString('Menu', 'Mode', 'Mode');
+  Calc.Caption := LanguageIniFile.ReadString('Menu', 'Calc', 'Calc');
+  About.Caption := LanguageIniFile.ReadString('Menu', 'About', 'About');
+  My_Creator.Caption := LanguageIniFile.ReadString('Menu', 'Creator', 'Creator');
+  Help.Caption := LanguageIniFile.ReadString('Menu', 'Help', 'Help');
+  Language.Caption := LanguageIniFile.ReadString('Menu', 'Language', 'Language');
+end;
+
 {$R *.lfm}
 {Очищение дисплея}
 procedure TMainForm.ClearDisplay(mini: boolean = True);
@@ -237,7 +264,7 @@ end;
 {Великий Я}
 procedure TMainForm.My_CreatorClick(Sender: TObject);
 begin
-  ShowMessage('Majorov The Great');
+  ShowMessage(LanguageIniFile.ReadString('Messages', 'Creator', 'Majorov The Great'));
 end;
 
 {Работа с буффером 5-го размера}
@@ -256,7 +283,7 @@ begin
     end;
   except
     on Exception do
-      Error('ERROR');
+      Error('Invalid Input');
   end;
   BufferDisplayLabel.Caption := 'Buffer: ' + floattostr(buffer);
 end;
@@ -284,7 +311,7 @@ end;
 procedure TMainForm.Error(err_msg: string);
 begin
   ClearDisplay(True);
-  DisplayLabel.Caption := err_msg;
+  DisplayLabel.Caption := LanguageIniFile.ReadString('Errors', err_msg, 'Error');
   NeedToClean := True;
   NeedToCleanMiniDisplay := True;
   boolError := True;
@@ -431,6 +458,8 @@ begin
   buffer := 0;
   BufferDisplayLabel.Caption := 'Buffer: 0';
   PolandString := '';
+  OpenBracketCount := 0;
+  CloseBracketCount := 0;
 end;
 
 {Очищение главного дисплея}
@@ -445,16 +474,37 @@ procedure TMainForm.CloseBracketButtonClick(Sender: TObject);
 begin
   if CloseBracketCount < OpenBracketCount then
   begin
-    MiniDisplayLabel.Caption := MIniDisplayLabel.Caption + DisplayLabel.Caption + ')';
-    PolandString := PolandString + DisplayLabel.Caption + ')';
+    if DisplayLabel.Caption <> '0' then
+    begin
+      MiniDisplayLabel.Caption := MIniDisplayLabel.Caption + DisplayLabel.Caption + ')';
+      PolandString := PolandString + DisplayLabel.Caption + ')';
+    end
+    else
+    begin
+      MiniDisplayLabel.Caption := MIniDisplayLabel.Caption + ')';
+      PolandString := PolandString + ')';
+    end;
     Inc(CloseBracketCount);
     DisplayLabel.Caption := '0';
   end;
 end;
 
+procedure TMainForm.EnglishClick(Sender: TObject);
+begin
+  LanguageIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) +
+    '\English.ini');
+  LocalizateMenu;
+end;
+
 {Открывающая скобка}
 procedure TMainForm.OpenBracketButtonClick(Sender: TObject);
 begin
+  if (PolandString <> '') and (PolandString[length(PolandString)] = ')') then
+  begin
+    ResultButton.Click;
+    MiniDisplayLabel.Caption := '';
+    PolandString := '';
+  end;
   MiniDisplayLabel.Caption := MiniDisplayLabel.Caption + '(';
   PolandString := PolandString + '(';
   Inc(OpenBracketCount);
@@ -472,8 +522,18 @@ begin
     exit;
   if OpenBracketCount <> CloseBracketCount then
   begin
-    Error('ALLO GDE SKOBKY, YOBA');
-    exit;
+    if DisplayLabel.Caption <> '0' then
+    begin
+      MiniDisplayLabel.Caption := MiniDisplayLabel.Caption + DisplayLabel.Caption + ')';
+      PolandString := PolandString + DisplayLabel.Caption + ')';
+      Inc(CloseBracketCount);
+    end;
+    while OpenBracketCount <> CloseBracketCount do
+    begin
+      MiniDisplayLabel.Caption := MiniDisplayLabel.Caption + ')';
+      PolandString := PolandString + ')';
+      Inc(CloseBracketCount);
+    end;
   end;
   if PolandString[length(PolandString)] in ['*', '/', '-', '+', '^'] then
   begin
@@ -498,11 +558,14 @@ begin
   NeedToClean := False;
   boolError := False;
   CButton.Click;
+  LanguageIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) +
+    '\English.ini');
 end;
 
 procedure TMainForm.HelpClick(Sender: TObject);
 begin
-  ShowMessage('Если ты не знаешь как пользоваться калькулятором, то закрой его');
+  ShowMessage(LanguageIniFile.ReadString('Messages', 'Help',
+    'If you dont know how to use calculator then close it'));
 end;
 
 end.
