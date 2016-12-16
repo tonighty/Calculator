@@ -26,6 +26,7 @@ type
     Language: TMenuItem;
     English: TMenuItem;
     Japanese: TMenuItem;
+    German: TMenuItem;
     Russian: TMenuItem;
     Mode: TMenuItem;
     MRButton: TSpeedButton;
@@ -73,6 +74,7 @@ type
     procedure CEButtonClick(Sender: TObject);
     procedure CloseBracketButtonClick(Sender: TObject);
     procedure EnglishClick(Sender: TObject);
+    procedure GermanClick(Sender: TObject);
     procedure JapaneseClick(Sender: TObject);
     procedure OpenBracketButtonClick(Sender: TObject);
     procedure ResultButtonClick(Sender: TObject);
@@ -497,6 +499,13 @@ procedure TMainForm.EnglishClick(Sender: TObject);
 begin
   LanguageIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) +
     '\English.ini');
+  LocalizateMenu;
+end;
+
+procedure TMainForm.GermanClick(Sender: TObject);
+begin
+  LanguageIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) +
+    '\German.ini');
   LocalizateMenu;
 end;
 
