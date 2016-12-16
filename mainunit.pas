@@ -25,6 +25,7 @@ type
     Calc: TMenuItem;
     Language: TMenuItem;
     English: TMenuItem;
+    Japanese: TMenuItem;
     Russian: TMenuItem;
     Mode: TMenuItem;
     MRButton: TSpeedButton;
@@ -72,6 +73,7 @@ type
     procedure CEButtonClick(Sender: TObject);
     procedure CloseBracketButtonClick(Sender: TObject);
     procedure EnglishClick(Sender: TObject);
+    procedure JapaneseClick(Sender: TObject);
     procedure OpenBracketButtonClick(Sender: TObject);
     procedure ResultButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -98,6 +100,7 @@ type
     OpenBracketCount, CloseBracketCount: integer;
     PolandString: string;
     LanguageIniFile: TIniFile;
+    ReversPoland: TPolandReverseRecord;
   public
     { public declarations }
   end;
@@ -192,7 +195,7 @@ begin
           begin
             MiniDisplayLabel.Caption :=
               MiniDisplayLabel.Caption + DisplayLabel.Caption + '!';
-            DisplayLabel.Caption := floattostr(fac(strtofloat(DisplayLabel.Caption)));
+            DisplayLabel.Caption := floattostr(ReversPoland.fac(strtofloat(DisplayLabel.Caption)));
             PolandString += DisplayLabel.Caption;
           end
           else
@@ -407,6 +410,7 @@ begin
     '(': OpenBracketButton.Click;
     ')': CloseBracketButton.Click;
     '^': XInExtentYButton.Click;
+    ':': XInExtentYButton.Click;
     chr(VK_RETURN): ResultButton.Click;
     chr(VK_BACK): BackspaceButton.Click;
     chr(VK_ESCAPE): CButton.Click;
@@ -496,6 +500,13 @@ begin
   LocalizateMenu;
 end;
 
+procedure TMainForm.JapaneseClick(Sender: TObject);
+begin
+  LanguageIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) +
+    '\Japanese.ini');
+  LocalizateMenu;
+end;
+
 {Открывающая скобка}
 procedure TMainForm.OpenBracketButtonClick(Sender: TObject);
 begin
@@ -540,12 +551,12 @@ begin
     MiniDisplayLabel.Caption := MiniDisplayLabel.Caption + DisplayLabel.Caption;
     PolandString := PolandString + DisplayLabel.Caption;
   end;
-  PolandString := ToPolandString(PolandString);
-  DisplayLabel.Caption := floattostr(PolandCalc(PolandString));
-  if DivisionByZero then
+  ReversPoland := TPolandReverseRecord.Create(PolandString);
+  DisplayLabel.Caption := floattostr(ReversPoland.Calc());
+  if ReversPoland.DivisionByZero then
   begin
     Error('Division by zero');
-    DivisionByZero := False;
+    ReversPoland.DivisionByZero := False;
   end;
   PolandString := '';
   RenderFont;

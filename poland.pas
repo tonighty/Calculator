@@ -26,27 +26,32 @@ type
     Next: PEStack;
   end;
 
-procedure push(var stack: PStack; var newdata: TData);
-procedure push(var stack: PESTack; var newdata: EData);
-function pop(var stack: PStack): TData;
-function pop(var stack: PEStack): EData;
-function peek(var stack: PStack): TData;
-function peek(var stack: PEStack): EData;
-function GetPriority(c: char): byte;
-function ToPolandString(s: string): string;
-function PolandCalc(s: string): extended;
-function fac(n: extended): extended;
+  { TPolandReverseRecord }
 
-var
-  Stack: PStack = nil;
-  _EStack: PEStack = nil;
-  x: TData;
-  y: EData;
-  DivisionByZero: boolean = False;
+  TPolandReverseRecord = class
+  private
+    Stack: PStack;
+    _EStack: PEStack;
+    procedure push(var newdata: TData);
+    procedure _EPush(var newdata: EData);
+    function pop(): TData;
+    function _EPop(): EData;
+    function peek(): TData;
+    function _EPeek(): EData;
+    function GetPriority(c: char): byte;
+    function ToPolandString(s: string): string;
+    function PolandCalc(s: string): extended;
+  public
+    DivisionByZero: boolean;
+    PolandString: string;
+    constructor Create(s: string);
+    function Calc(): extended;
+    function fac(n: extended): extended;
+  end;
 
 implementation
 
-procedure push(var stack: PStack; var newdata: TData);
+procedure TPolandReverseRecord.push(var newdata: TData);
 var
   tmp: PStack;
 begin
@@ -56,17 +61,17 @@ begin
   stack := tmp;
 end;
 
-procedure push(var stack: PESTack; var newdata: EData);
+procedure TPolandReverseRecord._EPush(var newdata: EData);
 var
   tmp: PEStack;
 begin
   new(tmp);
   tmp^.Data := newdata;
-  tmp^.Next := stack;
-  stack := tmp;
+  tmp^.Next := _EStack;
+  _EStack := tmp;
 end;
 
-function pop(var stack: PStack): TData;
+function TPolandReverseRecord.pop(): TData;
 var
   tmp: PStack;
 begin
@@ -79,32 +84,32 @@ begin
   end;
 end;
 
-function pop(var stack: PEStack): EData;
+function TPolandReverseRecord._EPop(): EData;
 var
   tmp: PEStack;
 begin
-  if stack <> nil then
+  if _EStack <> nil then
   begin
-    tmp := stack;
-    Result := stack^.Data;
-    stack := stack^.Next;
+    tmp := _EStack;
+    Result := _EStack^.Data;
+    _EStack := _EStack^.Next;
     dispose(tmp);
   end;
 end;
 
-function peek(var stack: PStack): TData;
+function TPolandReverseRecord.peek(): TData;
 begin
   if stack <> nil then
     Result := stack^.Data;
 end;
 
-function peek(var stack: PEStack): EData;
+function TPolandReverseRecord._EPeek(): EData;
 begin
-  if stack <> nil then
-    Result := stack^.Data;
+  if _EStack <> nil then
+    Result := _EStack^.Data;
 end;
 
-function fac(n: extended): extended;
+function TPolandReverseRecord.fac(n: extended): extended;
 begin
   if (n = 0) or (n = 1) then
     Result := 1
@@ -112,8 +117,21 @@ begin
     Result := n * fac(n - 1);
 end;
 
+constructor TPolandReverseRecord.Create(s: string);
+begin
+  PolandString := ToPolandString(s);
+  Stack := nil;
+  _EStack := nil;
+  DivisionByZero := False;
+end;
+
+function TPolandReverseRecord.Calc(): extended;
+begin
+  Result := PolandCalc(PolandString);
+end;
+
 (* Получение приоритета *)
-function GetPriority(c: char): byte;
+function TPolandReverseRecord.GetPriority(c: char): byte;
 begin
   Result := 0;
   case c of
@@ -124,7 +142,7 @@ begin
   end;
 end;
 
-function ToPolandString(s: string): string;
+function TPolandReverseRecord.ToPolandString(s: string): string;
 var
   TempString: string;
   i: integer;
@@ -145,20 +163,20 @@ begin
       tempstring := '';
       if s[i] in ['*', '/', '-', '+', '^'] then
       begin
-        if not ((stack = nil) or (getpriority(s[i]) > getpriority(peek(stack)))) then
+        if not ((Stack = nil) or (getpriority(s[i]) > getpriority(peek))) then
           repeat
-            Result := Result + pop(stack) + ' ';
-          until (stack = nil) or (getpriority(s[i]) > getpriority(peek(stack)));
-        if ((stack = nil) or (getpriority(s[i]) > getpriority(peek(stack)))) then
-          push(stack, s[i]);
+            Result := Result + pop() + ' ';
+          until (stack = nil) or (getpriority(s[i]) > getpriority(peek()));
+        if ((stack = nil) or (getpriority(s[i]) > getpriority(peek()))) then
+          push(s[i]);
       end
       else if s[i] = '(' then
-        push(stack, s[i])
+        push(s[i])
       else
       begin
-        while peek(stack) <> '(' do
-          Result := Result + pop(stack) + ' ';
-        pop(stack);
+        while peek() <> '(' do
+          Result := Result + pop() + ' ';
+        pop();
       end;
     end;
   end;
@@ -167,7 +185,7 @@ begin
   if stack <> nil then
   begin
     repeat
-      Result := Result + pop(stack) + ' ';
+      Result := Result + pop() + ' ';
     until stack = nil;
   end;
   while Result[1] = ' ' do
@@ -176,7 +194,7 @@ begin
     Delete(Result, length(Result), 1);
 end;
 
-function PolandCalc(s: string): extended;
+function TPolandReverseRecord.PolandCalc(s: string): extended;
 var
   i: integer;
   tempstring: string;
@@ -196,54 +214,54 @@ begin
       if tempstring <> '' then
       begin
         n1 := strtofloat(tempstring);
-        push(_EStack, n1);
+        _EPush(n1);
       end;
       tempstring := '';
       case s[i] of
         '+':
         begin
-          n1 := pop(_Estack);
-          n2 := pop(_estack);
+          n1 := _EPop();
+          n2 := _EPop();
           n1 := n2 + n1;
-          push(_estack, n1);
+          _EPush(n1);
         end;
         '-':
         begin
-          n1 := pop(_Estack);
-          n2 := pop(_Estack);
+          n1 := _EPop();
+          n2 := _EPop();
           n1 := n2 - n1;
-          push(_estack, n1);
+          _EPush(n1);
         end;
         '*':
         begin
-          n1 := pop(_Estack);
-          n2 := pop(_Estack);
+          n1 := _EPop();
+          n2 := _EPop();
           n1 := n1 * n2;
-          push(_estack, n1);
+          _EPush(n1);
         end;
         '/':
         begin
-          n1 := pop(_Estack);
-          n2 := pop(_estack);
+          n1 := _EPop();
+          n2 := _EPop();
           if n1 = 0 then
           begin
             DivisionByZero := True;
             exit;
           end;
           n1 := n2 / n1;
-          push(_estack, n1);
+          _EPush(n1);
         end;
         '^':
         begin
-          n1 := pop(_estack);
-          n2 := pop(_estack);
+          n1 := _EPop();
+          n2 := _EPop();
           n1 := power(n2, n1);
-          push(_estack, n1);
+          _EPush(n1);
         end;
       end;
     end;
   end;
-  Result := pop(_estack);
+  Result := _EPop();
 end;
 
 

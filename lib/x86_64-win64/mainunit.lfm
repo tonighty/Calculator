@@ -15240,6 +15240,10 @@ object MainForm: TMainForm
         Caption = 'English'
         OnClick = EnglishClick
       end
+      object Japanese: TMenuItem
+        Caption = '日本語'
+        OnClick = JapaneseClick
+      end
     end
   end
 end
