@@ -132,7 +132,7 @@ begin
   begin
     try
       case TButton(Sender).Hint of
-        // TODO: надо будет вложенные функции нормально сделать
+        { TODO: надо будет вложенные функции нормально сделать }
         'sqr':
         begin
           MiniDisplayLabel.Caption :=
@@ -197,7 +197,8 @@ begin
           begin
             MiniDisplayLabel.Caption :=
               MiniDisplayLabel.Caption + DisplayLabel.Caption + '!';
-            DisplayLabel.Caption := floattostr(ReversPoland.fac(strtofloat(DisplayLabel.Caption)));
+            DisplayLabel.Caption :=
+              floattostr(ReversPoland.fac(strtofloat(DisplayLabel.Caption)));
             PolandString += DisplayLabel.Caption;
           end
           else
@@ -250,7 +251,7 @@ end;
 procedure TMainForm.LocalizateMenu;
 begin
   Mode.Caption := LanguageIniFile.ReadString('Menu', 'Mode', 'Mode');
-  Calc.Caption := LanguageIniFile.ReadString('Menu', 'Calc', 'Calc');
+  Calc.Caption := LanguageIniFile.ReadString('Menu', 'Calculator', 'Calculator');
   About.Caption := LanguageIniFile.ReadString('Menu', 'About', 'About');
   My_Creator.Caption := LanguageIniFile.ReadString('Menu', 'Creator', 'Creator');
   Help.Caption := LanguageIniFile.ReadString('Menu', 'Help', 'Help');
@@ -413,6 +414,14 @@ begin
     ')': CloseBracketButton.Click;
     '^': XInExtentYButton.Click;
     ':': XInExtentYButton.Click;
+    's': SinButton.Click;
+    'c': CosButton.Click;
+    't': TanButton.Click;
+    'l': LogButton.Click;
+    'e': ExpButton.Click;
+    'n': FactorialButton.Click;
+    '=': ResultButton.Click;
+    '!': FactorialButton.Click;
     chr(VK_RETURN): ResultButton.Click;
     chr(VK_BACK): BackspaceButton.Click;
     chr(VK_ESCAPE): CButton.Click;
@@ -480,7 +489,7 @@ procedure TMainForm.CloseBracketButtonClick(Sender: TObject);
 begin
   if CloseBracketCount < OpenBracketCount then
   begin
-    if DisplayLabel.Caption <> '0' then
+    if (PolandString <> '') and (PolandString[length(PolandString)] <> ')') then
     begin
       MiniDisplayLabel.Caption := MIniDisplayLabel.Caption + DisplayLabel.Caption + ')';
       PolandString := PolandString + DisplayLabel.Caption + ')';
