@@ -138,14 +138,12 @@ begin
           MiniDisplayLabel.Caption :=
             MiniDisplayLabel.Caption + 'sqr(' + DisplayLabel.Caption + ')';
           DisplayLabel.Caption := floattostr(sqr(strtofloat(DisplayLabel.Caption)));
-          PolandString += DisplayLabel.Caption;
         end;
         'sqrt':
         begin
           MiniDisplayLabel.Caption :=
             MiniDisplayLabel.Caption + 'sqrt(' + DisplayLabel.Caption + ')';
           DisplayLabel.Caption := floattostr(sqrt(strtofloat(DisplayLabel.Caption)));
-          PolandString += DisplayLabel.Caption;
         end;
         '10ˣ':
         begin
@@ -153,7 +151,6 @@ begin
             MiniDisplayLabel.Caption + '10^(' + DisplayLabel.Caption + ')';
           DisplayLabel.Caption :=
             floattostr(power(10, strtofloat(DisplayLabel.Caption)));
-          PolandString += DisplayLabel.Caption;
         end;
         'log':
         begin
@@ -161,45 +158,44 @@ begin
             MiniDisplayLabel.Caption + 'log(' + DisplayLabel.Caption + ')';
           DisplayLabel.Caption :=
             floattostr(ln(strtofloat(DisplayLabel.Caption)) / ln(10));
-          PolandString += DisplayLabel.Caption;
         end;
         'Exp':
         begin
           MiniDisplayLabel.Caption :=
             MiniDisplayLabel.Caption + 'Epx(' + DisplayLabel.Caption + ')';
           DisplayLabel.Caption := floattostr(exp(strtofloat(DisplayLabel.Caption)));
-          PolandString += DisplayLabel.Caption;
         end;
         'sin':
         begin
           MiniDisplayLabel.Caption :=
             MiniDisplayLabel.Caption + 'sin(' + DisplayLabel.Caption + ')';
           DisplayLabel.Caption := floattostr(sin(strtofloat(DisplayLabel.Caption)));
-          PolandString += DisplayLabel.Caption;
         end;
         'cos':
         begin
           MiniDisplayLabel.Caption :=
             MiniDisplayLabel.Caption + 'cos(' + DisplayLabel.Caption + ')';
           DisplayLabel.Caption := floattostr(cos(strtofloat(DisplayLabel.Caption)));
-          PolandString += DisplayLabel.Caption;
         end;
         'tan':
         begin
           MiniDisplayLabel.Caption :=
             MiniDisplayLabel.Caption + 'tan(' + DisplayLabel.Caption + ')';
           DisplayLabel.Caption := floattostr(tan(strtofloat(DisplayLabel.Caption)));
-          PolandString += DisplayLabel.Caption;
         end;
         'n!':
         begin
           if isInt() then
           begin
+            if (strtofloat(DisplayLabel.Caption)) > 170 then
+            begin
+              Error('Overflow');
+              Exit;
+            end;
             MiniDisplayLabel.Caption :=
               MiniDisplayLabel.Caption + DisplayLabel.Caption + '!';
             DisplayLabel.Caption :=
               floattostr(ReversPoland.fac(strtofloat(DisplayLabel.Caption)));
-            PolandString += DisplayLabel.Caption;
           end
           else
           begin
@@ -212,14 +208,12 @@ begin
           MiniDisplayLabel.Caption :=
             MiniDisplayLabel.Caption + 'ln(' + DisplayLabel.Caption + ')';
           DisplayLabel.Caption := floattostr(ln(strtofloat(DisplayLabel.Caption)));
-          PolandString += DisplayLabel.Caption;
         end;
         'InversX':
         begin
           MiniDisplayLabel.Caption :=
             MiniDisplayLabel.Caption + 'invers(' + DisplayLabel.Caption + ')';
           DisplayLabel.Caption := floattostr(1 / (strtofloat(DisplayLabel.Caption)));
-          PolandString += DisplayLabel.Caption;
         end;
       end;
     except
@@ -354,7 +348,7 @@ begin
       begin
         MiniDisplayLabel.Caption :=
           MiniDisplayLabel.Caption + ' ' + TButton(Sender).Hint + ' ';
-        PolandString := PolandString + TButton(Sender).Hint;
+        PolandString := PolandString + DisplayLabel.Caption + TButton(Sender).Hint;
       end;
     end
     else
@@ -371,7 +365,7 @@ begin
     begin
       MiniDisplayLabel.Caption :=
         MiniDisplayLabel.Caption + ' ' + TButton(Sender).Caption + ' ';
-      PolandString := PolandString + TButton(Sender).Hint;
+      PolandString := PolandString + DisplayLabel.Caption + TButton(Sender).Hint;
     end;
     NeedToClean := True;
   end;
