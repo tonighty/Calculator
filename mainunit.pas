@@ -136,51 +136,51 @@ begin
         'sqr':
         begin
           MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + 'sqr(' + DisplayLabel.Caption + ')';
+            MiniDisplayLabel.Caption + 'sqr[' + DisplayLabel.Caption + ']';
           DisplayLabel.Caption := floattostr(sqr(strtofloat(DisplayLabel.Caption)));
         end;
         'sqrt':
         begin
           MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + 'sqrt(' + DisplayLabel.Caption + ')';
+            MiniDisplayLabel.Caption + 'sqrt[' + DisplayLabel.Caption + ']';
           DisplayLabel.Caption := floattostr(sqrt(strtofloat(DisplayLabel.Caption)));
         end;
         '10ˣ':
         begin
           MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + '10^(' + DisplayLabel.Caption + ')';
+            MiniDisplayLabel.Caption + '10^[' + DisplayLabel.Caption + ']';
           DisplayLabel.Caption :=
             floattostr(power(10, strtofloat(DisplayLabel.Caption)));
         end;
         'log':
         begin
           MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + 'log(' + DisplayLabel.Caption + ')';
+            MiniDisplayLabel.Caption + 'log[' + DisplayLabel.Caption + ']';
           DisplayLabel.Caption :=
             floattostr(ln(strtofloat(DisplayLabel.Caption)) / ln(10));
         end;
         'Exp':
         begin
           MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + 'Epx(' + DisplayLabel.Caption + ')';
+            MiniDisplayLabel.Caption + 'Epx[' + DisplayLabel.Caption + ']';
           DisplayLabel.Caption := floattostr(exp(strtofloat(DisplayLabel.Caption)));
         end;
         'sin':
         begin
           MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + 'sin(' + DisplayLabel.Caption + ')';
+            MiniDisplayLabel.Caption + 'sin[' + DisplayLabel.Caption + ']';
           DisplayLabel.Caption := floattostr(sin(strtofloat(DisplayLabel.Caption)));
         end;
         'cos':
         begin
           MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + 'cos(' + DisplayLabel.Caption + ')';
+            MiniDisplayLabel.Caption + 'cos[' + DisplayLabel.Caption + ']';
           DisplayLabel.Caption := floattostr(cos(strtofloat(DisplayLabel.Caption)));
         end;
         'tan':
         begin
           MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + 'tan(' + DisplayLabel.Caption + ')';
+            MiniDisplayLabel.Caption + 'tan[' + DisplayLabel.Caption + ']';
           DisplayLabel.Caption := floattostr(tan(strtofloat(DisplayLabel.Caption)));
         end;
         'n!':
@@ -206,13 +206,13 @@ begin
         'ln':
         begin
           MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + 'ln(' + DisplayLabel.Caption + ')';
+            MiniDisplayLabel.Caption + 'ln[' + DisplayLabel.Caption + ']';
           DisplayLabel.Caption := floattostr(ln(strtofloat(DisplayLabel.Caption)));
         end;
         'InversX':
         begin
           MiniDisplayLabel.Caption :=
-            MiniDisplayLabel.Caption + 'invers(' + DisplayLabel.Caption + ')';
+            MiniDisplayLabel.Caption + 'invers[' + DisplayLabel.Caption + ']';
           DisplayLabel.Caption := floattostr(1 / (strtofloat(DisplayLabel.Caption)));
         end;
       end;
@@ -337,7 +337,8 @@ begin
     begin
       if (MiniDisplayLabel.Caption = '') or
         ((MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] <> ')') and
-        (MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] <> '!')) then
+        (MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] <> '!') and
+        (MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] <> ']')) then
       begin
         MiniDisplayLabel.Caption :=
           MiniDisplayLabel.Caption + DisplayLabel.Caption + ' ' +
@@ -346,15 +347,21 @@ begin
       end
       else
       begin
+        if (MiniDisplayLabel.Caption = '') or
+          (MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] = ']') or
+          (MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] = '!') then
+          PolandString := PolandString + DisplayLabel.Caption + TButton(Sender).Hint
+        else
+          PolandString := PolandString + TButton(Sender).Hint;
         MiniDisplayLabel.Caption :=
           MiniDisplayLabel.Caption + ' ' + TButton(Sender).Hint + ' ';
-        PolandString := PolandString + DisplayLabel.Caption + TButton(Sender).Hint;
       end;
     end
     else
     if (MiniDisplayLabel.Caption = '') or
       ((MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] <> ')') and
-      (MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] <> '!')) then
+      (MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] <> '!') and
+      (MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] <> ']')) then
     begin
       MiniDisplayLabel.Caption :=
         MiniDisplayLabel.Caption + DisplayLabel.Caption + ' ' +
@@ -363,9 +370,14 @@ begin
     end
     else
     begin
+      if (MiniDisplayLabel.Caption = '') or
+        ((MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] = ']') or
+        (MiniDisplayLabel.Caption[length(MiniDisplayLabel.Caption)] = '!')) then
+        PolandString := PolandString + DisplayLabel.Caption + TButton(Sender).Hint
+      else
+        PolandString := PolandString + TButton(Sender).Hint;
       MiniDisplayLabel.Caption :=
         MiniDisplayLabel.Caption + ' ' + TButton(Sender).Caption + ' ';
-      PolandString := PolandString + DisplayLabel.Caption + TButton(Sender).Hint;
     end;
     NeedToClean := True;
   end;
